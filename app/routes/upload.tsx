@@ -5,7 +5,7 @@ import { usePuterStore } from "~/lib/puter";
 import { useNavigate } from "react-router";
 import { convertPdfToImage } from "~/lib/pdf2img";
 import { generateUUID } from "~/lib/utils";
-import { prepareInstructions } from "../../constants";
+import { prepareInstructions, AIResponseFormat } from "../../constants";
 
 const Upload = () => {
   const { auth, isLoading, fs, ai, kv } = usePuterStore();
@@ -61,7 +61,7 @@ const Upload = () => {
 
     const feedback = await ai.feedback(
       uploadedFile.path,
-      prepareInstructions({ jobTitle, jobDescription })
+      prepareInstructions({ jobTitle, jobDescription, AIResponseFormat })
     );
     if (!feedback) return setStatusText("Error: Failed to analyze resume");
 
@@ -70,7 +70,13 @@ const Upload = () => {
         ? feedback.message.content
         : feedback.message.content[0].text;
 
-    data.feedback = JSON.parse(feedbackText);
+    try {
+      data.feedback = JSON.parse(feedbackText);
+    } catch (error) {
+      console.error("Failed to parse feedback JSON:", error);
+      console.error("Raw feedback text:", feedbackText);
+      return setStatusText("Error: Failed to parse AI response");
+    }
     await kv.set(`resume:${uuid}`, JSON.stringify(data));
     setStatusText("Analysis complete, redirecting...");
     console.log(data);

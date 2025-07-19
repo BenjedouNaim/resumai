@@ -4,6 +4,7 @@ import { usePuterStore } from "~/lib/puter";
 import Summary from "~/components/Summary";
 import ATS from "~/components/ATS";
 import Details from "~/components/Details";
+import type { Feedback } from "../../types";
 
 export const meta = () => [
   { title: "Resumind | Review " },
@@ -25,26 +26,54 @@ const Resume = () => {
 
   useEffect(() => {
     const loadResume = async () => {
-      const resume = await kv.get(`resume:${id}`);
+      try {
+        const resume = await kv.get(`resume:${id}`);
 
-      if (!resume) return;
+        if (!resume) {
+          console.error("No resume found for ID:", id);
+          return;
+        }
 
-      const data = JSON.parse(resume);
+        let data;
+        try {
+          data = JSON.parse(resume);
+        } catch (parseError) {
+          console.error("Failed to parse resume data:", parseError);
+          console.error("Raw resume data:", resume);
+          return;
+        }
 
-      const resumeBlob = await fs.read(data.resumePath);
-      if (!resumeBlob) return;
+        const resumeBlob = await fs.read(data.resumePath);
+        if (!resumeBlob) return;
 
-      const pdfBlob = new Blob([resumeBlob], { type: "application/pdf" });
-      const resumeUrl = URL.createObjectURL(pdfBlob);
-      setResumeUrl(resumeUrl);
+        const pdfBlob = new Blob([resumeBlob], { type: "application/pdf" });
+        const resumeUrl = URL.createObjectURL(pdfBlob);
+        setResumeUrl(resumeUrl);
 
-      const imageBlob = await fs.read(data.imagePath);
-      if (!imageBlob) return;
-      const imageUrl = URL.createObjectURL(imageBlob);
-      setImageUrl(imageUrl);
+        const imageBlob = await fs.read(data.imagePath);
+        if (!imageBlob) return;
+        const imageUrl = URL.createObjectURL(imageBlob);
+        setImageUrl(imageUrl);
 
-      setFeedback(data.feedback);
-      console.log({ resumeUrl, imageUrl, feedback: data.feedback });
+        setFeedback(data.feedback);
+        console.log({ resumeUrl, imageUrl, feedback: data.feedback });
+        
+        // Validate feedback structure
+        if (data.feedback && typeof data.feedback === 'object') {
+          console.log("Feedback structure validation:", {
+            hasOverallScore: 'overallScore' in data.feedback,
+            hasATS: 'ATS' in data.feedback && data.feedback.ATS && 'score' in data.feedback.ATS,
+            hasToneAndStyle: 'toneAndStyle' in data.feedback && data.feedback.toneAndStyle && 'score' in data.feedback.toneAndStyle,
+            hasContent: 'content' in data.feedback && data.feedback.content && 'score' in data.feedback.content,
+            hasStructure: 'structure' in data.feedback && data.feedback.structure && 'score' in data.feedback.structure,
+            hasSkills: 'skills' in data.feedback && data.feedback.skills && 'score' in data.feedback.skills,
+          });
+        } else {
+          console.error("Invalid feedback structure:", data.feedback);
+        }
+      } catch (error) {
+        console.error("Error loading resume:", error);
+      }
     };
 
     loadResume();
@@ -80,8 +109,8 @@ const Resume = () => {
             <div className="flex flex-col gap-8 animate-in fade-in duration-1000">
               <Summary feedback={feedback} />
               <ATS
-                score={feedback.ATS.score || 0}
-                suggestions={feedback.ATS.tips || []}
+                score={feedback.ATS?.score || 0}
+                suggestions={feedback.ATS?.tips || []}
               />
               <Details feedback={feedback} />
             </div>

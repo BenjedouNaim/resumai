@@ -5,6 +5,7 @@ import {
   AccordionHeader,
   AccordionItem,
 } from "./Accordion";
+import type { Feedback } from "../../types";
 
 const ScoreBadge = ({ score }: { score: number }) => {
   return (
@@ -114,44 +115,44 @@ const Details = ({ feedback }: { feedback: Feedback }) => {
           <AccordionHeader itemId="tone-style">
             <CategoryHeader
               title="Tone & Style"
-              categoryScore={feedback.toneAndStyle.score}
+              categoryScore={feedback.toneAndStyle?.score || 0}
             />
           </AccordionHeader>
           <AccordionContent itemId="tone-style">
-            <CategoryContent tips={feedback.toneAndStyle.tips} />
+            <CategoryContent tips={feedback.toneAndStyle?.tips || []} />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem id="content">
           <AccordionHeader itemId="content">
             <CategoryHeader
               title="Content"
-              categoryScore={feedback.content.score}
+              categoryScore={feedback.content?.score || 0}
             />
           </AccordionHeader>
           <AccordionContent itemId="content">
-            <CategoryContent tips={feedback.content.tips} />
+            <CategoryContent tips={feedback.content?.tips || []} />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem id="structure">
           <AccordionHeader itemId="structure">
             <CategoryHeader
               title="Structure"
-              categoryScore={feedback.structure.score}
+              categoryScore={feedback.structure?.score || 0}
             />
           </AccordionHeader>
           <AccordionContent itemId="structure">
-            <CategoryContent tips={feedback.structure.tips} />
+            <CategoryContent tips={feedback.structure?.tips || []} />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem id="skills">
           <AccordionHeader itemId="skills">
             <CategoryHeader
               title="Skills"
-              categoryScore={feedback.skills.score}
+              categoryScore={feedback.skills?.score || 0}
             />
           </AccordionHeader>
           <AccordionContent itemId="skills">
-            <CategoryContent tips={feedback.skills.tips} />
+            <CategoryContent tips={feedback.skills?.tips || []} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
