@@ -57,16 +57,31 @@ const Resume = () => {
 
         setFeedback(data.feedback);
         console.log({ resumeUrl, imageUrl, feedback: data.feedback });
-        
+
         // Validate feedback structure
-        if (data.feedback && typeof data.feedback === 'object') {
+        if (data.feedback && typeof data.feedback === "object") {
           console.log("Feedback structure validation:", {
-            hasOverallScore: 'overallScore' in data.feedback,
-            hasATS: 'ATS' in data.feedback && data.feedback.ATS && 'score' in data.feedback.ATS,
-            hasToneAndStyle: 'toneAndStyle' in data.feedback && data.feedback.toneAndStyle && 'score' in data.feedback.toneAndStyle,
-            hasContent: 'content' in data.feedback && data.feedback.content && 'score' in data.feedback.content,
-            hasStructure: 'structure' in data.feedback && data.feedback.structure && 'score' in data.feedback.structure,
-            hasSkills: 'skills' in data.feedback && data.feedback.skills && 'score' in data.feedback.skills,
+            hasOverallScore: "overallScore" in data.feedback,
+            hasATS:
+              "ATS" in data.feedback &&
+              data.feedback.ATS &&
+              "score" in data.feedback.ATS,
+            hasToneAndStyle:
+              "toneAndStyle" in data.feedback &&
+              data.feedback.toneAndStyle &&
+              "score" in data.feedback.toneAndStyle,
+            hasContent:
+              "content" in data.feedback &&
+              data.feedback.content &&
+              "score" in data.feedback.content,
+            hasStructure:
+              "structure" in data.feedback &&
+              data.feedback.structure &&
+              "score" in data.feedback.structure,
+            hasSkills:
+              "skills" in data.feedback &&
+              data.feedback.skills &&
+              "score" in data.feedback.skills,
           });
         } else {
           console.error("Invalid feedback structure:", data.feedback);

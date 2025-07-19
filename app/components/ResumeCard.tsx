@@ -15,7 +15,7 @@ const ResumeCard = ({
   useEffect(() => {
     const loadImage = async () => {
       if (!imagePath) return;
-      
+
       try {
         const imageBlob = await fs.read(imagePath);
         if (imageBlob) {
